@@ -30,7 +30,7 @@ http://46.137.229.41:8080
 argocd:
 https://54.255.225.45:32112/applications/argocd/tel4vn?view=tree&resource=&operation=false
 
-=================argodc pipeline-good======================
+=================argodc pipeline-good- named: tel4vn-update-for argocd ======================
 pipeline {
     agent { label 'tel4vn' }
 
@@ -64,7 +64,7 @@ pipeline {
 }
 
 
-=====================Jenkinsfile CI/CD-good===========================
+=====================Jenkinsfile CI/CD-good- named: tel4vn ===========================
 pipeline {
     agent { label 'tel4vn' }
 
