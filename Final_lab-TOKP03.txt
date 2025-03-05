@@ -110,3 +110,9 @@ pipeline {
 }
 }
 
+
+=================
+Link chatGPT troubleshoot lab issue
+
+https://chatgpt.com/share/67c85565-770c-800a-bb49-b8565f6d0f25
+https://chatgpt.com/share/67c855ad-4630-800a-9a94-8bb5c0aa4db9
