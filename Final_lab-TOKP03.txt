@@ -64,7 +64,7 @@ pipeline {
 }
 
 
-=====================jenkins file-good===========================
+=====================Jenkinsfile CI/CD-good===========================
 pipeline {
     agent { label 'tel4vn' }
 
