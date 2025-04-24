@@ -16,7 +16,7 @@ jobs:
           command: npm test -- --passWithNoTests
   build-and-push:
     environment:
-      DOCKER_IMAGE: raynguyen86/cuisines
+      DOCKER_IMAGE: raynguyen86/rayrepo
       DOCKER_TAG: latest
     executor: docker/docker
     steps:
