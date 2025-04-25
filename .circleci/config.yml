@@ -54,14 +54,14 @@ jobs:
       - run:
           name: Deploy to k8s
           command: |
-            ssh -i ~/.ssh/id_rsa thanhthienqnam2101@34.30.22.216 \<< 'EOF'
+            ssh -i ~/.ssh/id_rsa nguyenxuantai1986@34.30.22.216 \<< 'EOF'
               export DOCKER_USER="$DOCKER_USER"
               export DOCKER_PASSWORD="$DOCKER_PASSWORD"
               echo "\$DOCKER_PASSWORD" | sudo docker login -u "\$DOCKER_USER" --password-stdin
               docker pull raynguyen86/rayrepo:latest
-              docker stop myapp || true
-              docker rm myapp || true
-              docker run -d --name myapp -p 80:3000 raynguyen86/rayrepo:latest
+              docker stop rayrox || true
+              docker rm rayrox || true
+              docker run -d --name rayrox -p 80:3000 raynguyen86/rayrepo:latest
             EOF
 
 workflows:
