@@ -44,15 +44,15 @@ jobs:
     steps:
       - add_ssh_keys:
           fingerprints:
-            - "SHA256:fiJCV4KILr06sP+Rzf+4wMFC8+N34xyHwSzTH28li50"
+            - "SHA256:wAqnN6tDTMSu32Q4nd3yClg9k+dSxOS96g6g4ZF6/yI"
       - run:
           name: Deploy to VM
           command: |
-            ssh -o StrictHostKeyChecking=no ubuntu@$VM_HOST << EOF
+            ssh -o StrictHostKeyChecking=no ubuntu@$34.30.22.216 \<< 'EOF'
               docker pull raynguyen86/rayrepo:latest
-              docker stop rayrox || true
-              docker rm rayrox || true
-              docker run -d --name rayrox -p 80:3000 raynguyen86/rayrepo:latest
+              docker stop myapp || true
+              docker rm myapp || true
+              docker run -d --name myapp -p 80:3000 raynguyen86/rayrepo:latest
             EOF
 
 workflows:
