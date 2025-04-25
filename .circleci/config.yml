@@ -48,7 +48,7 @@ jobs:
       - run:
           name: Deploy to k8s
           command: |
-            ssh -o StrictHostKeyChecking=no ubuntu@$VM_HOST \<< 'EOF'
+            ssh -o StrictHostKeyChecking=no nguyenxuantai1986@$VM_HOST \<< 'EOF'
               docker pull raynguyen86/rayrepo:latest
               docker stop myapp || true
               docker rm myapp || true
