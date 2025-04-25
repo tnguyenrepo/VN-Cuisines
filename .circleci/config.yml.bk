@@ -38,34 +38,35 @@ jobs:
           command: |
             echo "Digest is: $(</tmp/digest.txt)"
 
-  deploy-to-vm:
+  deploy:
     docker:
-      - image: cimg/base:stable
+      - image: circleci/nodejs-16
     steps:
-      - add_ssh_keys:
-          fingerprints:
-            - "SHA256:fiJCV4KILr06sP+Rzf+4wMFC8+N34xyHwSzTH28li50"
+      - checkout
       - run:
-          name: Deploy to VM
+          name: "Set up SSH"
           command: |
-            ssh -o StrictHostKeyChecking=no ubuntu@$VM_HOST << EOF
-              docker pull raynguyen86/rayrepo:latest
-              docker stop rayrox || true
-              docker rm rayrox || true
-              docker run -d --name rayrox -p 80:3000 raynguyen86/rayrepo:latest
-            EOF
+            mkdir -p ~/.ssh
+            echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            ssh-keyscan -H 34.143.221.252 >> ~/.ssh/known_hosts
+      - run:
+          name: "Deploy to Kubernetes"
+          command: |
+            kubectl config set-cluster k8s --server=https://34.143.221.252
+            kubectl config set-credentials circleci --token=$KUBE_TOKEN
+            kubectl config set-context default --cluster=k8s --user=ubuntu
+            kubectl config use-context default
+            kubectl set image deployment/env-uat rayrepo=$DOCKER_IMAGE:$DOCKER_TAG -n uat
 
 workflows:
+  version: 2
   mypipeline:
     jobs:
       - test
       - build-and-push:
           requires:
             - test
-          filters:
-            branches:
-              only:
-                - main
-      - deploy-to-vm:
+      - deploy:
           requires:
             - build-and-push
