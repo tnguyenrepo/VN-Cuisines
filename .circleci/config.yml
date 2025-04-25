@@ -59,7 +59,7 @@ jobs:
               sudo docker pull raynguyen86/rayrepo:latest
               sudo docker stop rayrox || true
               sudo docker rm rayrox || true
-              sudo docker run -d --name rayrox -p 8080:3000 raynguyen86/rayrepo:latest
+              sudo docker run -d --name rayrox -p 80:3000 raynguyen86/rayrepo:latest
             EOF
 
 workflows:
