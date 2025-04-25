@@ -54,7 +54,7 @@ jobs:
       - run:
           name: Deploy to k8s
           command: |
-            ssh -i ~/.ssh/id_rsa nguyenxuantai1986@34.30.22.216 << EOF
+            ssh -i ~/.ssh/id_rsa nguyenxuantai1986@34.30.22.216 \<< EOF
               echo "${DOCKER_PASSWORD}" | sudo docker login -u "${DOCKER_USER}" --password-stdin
               sudo docker pull raynguyen86/rayrepo:latest
               sudo docker stop rayrox || true
