@@ -48,7 +48,7 @@ jobs:
       - run:
           name: Deploy to VM
           command: |
-            ssh -o StrictHostKeyChecking=no ubuntu@$34.30.22.216 \<< 'EOF'
+            ssh -o StrictHostKeyChecking=no ubuntu@$VM_HOST \<< 'EOF'
               docker pull raynguyen86/rayrepo:latest
               docker stop myapp || true
               docker rm myapp || true
