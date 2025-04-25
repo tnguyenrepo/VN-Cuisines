@@ -1,0 +1,74 @@
+version: 2.1
+
+jobs:
+  test:
+    executor:
+      name: node/default
+      tag: '16.10'
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          name: Run tests with --passWithNoTests
+          command: npm test -- --passWithNoTests
+
+  build-and-push:
+    environment:
+      DOCKER_IMAGE: raynguyen86/rayrepo
+      DOCKER_TAG: latest
+    executor: docker/docker
+    steps:
+      - setup_remote_docker
+      - checkout
+      - docker/check:
+          docker-username: DOCKER_USER
+          docker-password: DOCKER_PASSWORD
+      - docker/build:
+          image: $DOCKER_IMAGE
+          tag: $DOCKER_TAG
+      - docker/push:
+          digest-path: /tmp/digest.txt
+          image: $DOCKER_IMAGE
+          tag: $DOCKER_TAG
+      - run:
+          command: |
+            echo "Digest is: $(</tmp/digest.txt)"
+
+  deploy-to-k8s:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+
+      - run:
+          name: Setup SSH key
+          command: |
+            mkdir -p ~/.ssh
+            echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            ssh-keyscan -H 34.30.22.216 >> ~/.ssh/known_hosts
+
+      - run:
+          name: Deploy to k8s
+          command: |
+            ssh -i ~/.ssh/id_rsa thanhthienqnam2101@34.30.22.216 << 'EOF'
+              docker pull raynguyen86/rayrepo:latest
+              docker stop myapp || true
+              docker rm myapp || true
+              docker run -d --name myapp -p 80:3000 raynguyen86/rayrepo:latest
+            EOF
+
+workflows:
+  mypipeline:
+    jobs:
+      - test
+      - build-and-push:
+          requires:
+            - test
+          filters:
+            branches:
+              only:
+                - main
+      - deploy-to-k8s:
+          requires:
+            - build-and-push
