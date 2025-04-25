@@ -55,7 +55,9 @@ jobs:
           name: Deploy to k8s
           command: |
             ssh -i ~/.ssh/id_rsa thanhthienqnam2101@34.30.22.216 \<< 'EOF'
-              echo "$DOCKER_PASSWORD" | sudo docker login -u "$DOCKER_USER" --password-stdin
+              export DOCKER_USER="$DOCKER_USER"
+              export DOCKER_PASSWORD="$DOCKER_PASSWORD"
+              echo "\$DOCKER_PASSWORD" | sudo docker login -u "\$DOCKER_USER" --password-stdin
               docker pull raynguyen86/rayrepo:latest
               docker stop myapp || true
               docker rm myapp || true
