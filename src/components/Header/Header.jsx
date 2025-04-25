@@ -35,7 +35,7 @@ const Header = () => {
       )}
       <div className="headerContent">
         <img src={Logo} alt="logo" />
-        <h3>Discover the best food & drinks in VIETNAM</h3>
+        <h3>Discover the best food & drinks in VIETNAM country</h3>
         <div className="input">
           <select name="" id="">
             <option value="Chennai">Chennai</option>
