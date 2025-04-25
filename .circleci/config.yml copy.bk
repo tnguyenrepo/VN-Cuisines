@@ -1,0 +1,49 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5.2
+  docker: circleci/docker@2.4.0
+
+jobs:
+  test:
+    executor:
+      name: node/default
+      tag: '16.10'
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          name: Run tests with --passWithNoTests
+          command: npm test -- --passWithNoTests
+  build-and-push:
+    environment:
+      DOCKER_IMAGE: raynguyen86/rayrepo
+      DOCKER_TAG: latest
+    executor: docker/docker
+    steps:
+      - setup_remote_docker
+      - checkout
+      - docker/check:
+          docker-username: DOCKER_USER
+          docker-password: DOCKER_PASSWORD
+      - docker/build:
+          image: $DOCKER_IMAGE
+          tag: $DOCKER_TAG
+      - docker/push:
+          digest-path: /tmp/digest.txt
+          image: $DOCKER_IMAGE
+          tag: $DOCKER_TAG
+      - run:
+          command: |
+            echo "Digest is: $(</tmp/digest.txt)"
+workflows:
+  mypipeline:
+    jobs:
+      - test
+      - build-and-push:
+          requires:
+            - test
+          filters:
+            branches:
+              only:
+                - main
