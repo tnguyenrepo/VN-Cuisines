@@ -49,11 +49,11 @@ jobs:
             mkdir -p ~/.ssh
             echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
             chmod 600 ~/.ssh/id_rsa
-            ssh-keyscan -H 34.143.221.252 >> ~/.ssh/known_hosts
+            ssh-keyscan -H 34.30.22.216 >> ~/.ssh/known_hosts
       - run:
-          name: "Deploy to Kubernetes"
+          name: "deploy-to-k8s"
           command: |
-            kubectl config set-cluster k8s --server=https://34.143.221.252
+            kubectl config set-cluster k8s --server=https://34.30.22.216
             kubectl config set-credentials circleci --token=$KUBE_TOKEN
             kubectl config set-context default --cluster=k8s --user=ubuntu
             kubectl config use-context default
