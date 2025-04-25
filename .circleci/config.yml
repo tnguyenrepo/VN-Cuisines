@@ -66,6 +66,6 @@ workflows:
             branches:
               only:
                 - main
-      - deploy-to-vm:
+      - deploy-to-k8s:
           requires:
             - build-and-push
