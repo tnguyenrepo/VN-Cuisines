@@ -44,7 +44,7 @@ jobs:
     steps:
       - add_ssh_keys:
           fingerprints:
-            - "SHA256:wAqnN6tDTMSu32Q4nd3yClg9k+dSxOS96g6g4ZF6/yI"
+            - "SHA256:CyJIjBVij72cnyQEYS6EpMyoX/K4K8o0iFVMFDBJg8A"
       - run:
           name: Deploy to k8s
           command: |
