@@ -44,11 +44,11 @@ jobs:
     steps:
       - add_ssh_keys:
           fingerprints:
-            - "SHA256:CyJIjBVij72cnyQEYS6EpMyoX/K4K8o0iFVMFDBJg8A"
+            - "SHA256:juFEAyK4FbJc/NeOGQ2KF2d36y0nWjd+DgSBydPAdww"
       - run:
           name: Deploy to k8s
           command: |
-            ssh -o StrictHostKeyChecking=no nguyenxuantai1986@$VM_HOST \<< 'EOF'
+            ssh -o StrictHostKeyChecking=no thanhthienqnam2101@34.30.22.216 \<< 'EOF'
               docker pull raynguyen86/rayrepo:latest
               docker stop myapp || true
               docker rm myapp || true
