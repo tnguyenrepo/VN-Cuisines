@@ -1,9 +1,9 @@
 version: 2.1
 
 orbs:
-  node: circleci/node@5.2
+  node: circleci/node@5.2.0
   docker: circleci/docker@2.4.0
-  
+
 jobs:
   test:
     executor:
@@ -35,6 +35,7 @@ jobs:
           image: $DOCKER_IMAGE
           tag: $DOCKER_TAG
       - run:
+          name: Show Docker Digest
           command: |
             echo "Digest is: $(</tmp/digest.txt)"
 
@@ -43,7 +44,6 @@ jobs:
       - image: cimg/base:stable
     steps:
       - checkout
-
       - run:
           name: Setup SSH key
           command: |
@@ -51,11 +51,10 @@ jobs:
             echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan -H 34.30.22.216 >> ~/.ssh/known_hosts
-
       - run:
           name: Deploy to k8s
           command: |
-            ssh -i ~/.ssh/id_rsa thanhthienqnam2101@34.30.22.216 << 'EOF'
+            ssh -i ~/.ssh/id_rsa thanhthienqnam2101@34.30.22.216 \<< 'EOF'
               docker pull raynguyen86/rayrepo:latest
               docker stop myapp || true
               docker rm myapp || true
