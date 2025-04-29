@@ -62,31 +62,31 @@ jobs:
   #             sudo docker run -d --name rayrox -p 3000:80 raynguyen86/rayrepo:latest
   #           EOF
 
-deploy-to-k8s:
-  docker:
-    - image: cimg/base:stable
-  steps:
-    - checkout
-    - run:
-        name: Setup SSH key
-        command: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H 34.30.22.216 >> ~/.ssh/known_hosts
-    - run:
-        name: Deploy to k8s
-        command: |
-          ssh -i ~/.ssh/id_rsa nguyenxuantai1986@34.30.22.216 << EOF
-            export DOCKER_USER="$DOCKER_USER"
-            export DOCKER_PASSWORD="$DOCKER_PASSWORD"
-            export DOCKER_TAG="build-${CIRCLE_BUILD_NUM}"
-            echo "\$DOCKER_PASSWORD" | sudo docker login -u "\$DOCKER_USER" --password-stdin
-            sudo docker pull raynguyen86/rayrepo:\$DOCKER_TAG
-            sudo docker stop rayrox || true
-            sudo docker rm rayrox || true
-            sudo docker run -d --name rayrox -p 8080:3000 raynguyen86/rayrepo:\$DOCKER_TAG
-          EOF
+  deploy-to-k8s:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          name: Setup SSH key
+          command: |
+            mkdir -p ~/.ssh
+            echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            ssh-keyscan -H 34.30.22.216 >> ~/.ssh/known_hosts
+      - run:
+          name: Deploy to k8s
+          command: |
+            ssh -i ~/.ssh/id_rsa nguyenxuantai1986@34.30.22.216 << EOF
+              export DOCKER_USER="$DOCKER_USER"
+              export DOCKER_PASSWORD="$DOCKER_PASSWORD"
+              export DOCKER_TAG="build-${CIRCLE_BUILD_NUM}"
+              echo "\$DOCKER_PASSWORD" | sudo docker login -u "\$DOCKER_USER" --password-stdin
+              sudo docker pull raynguyen86/rayrepo:\$DOCKER_TAG
+              sudo docker stop rayrox || true
+              sudo docker rm rayrox || true
+              sudo docker run -d --name rayrox -p 8080:3000 raynguyen86/rayrepo:\$DOCKER_TAG
+            EOF
 
 workflows:
   mypipeline:
