@@ -19,7 +19,7 @@ jobs:
   build-and-push:
     environment:
       DOCKER_IMAGE: raynguyen86/rayrepo
-      DOCKER_TAG: latest
+      #DOCKER_TAG: latest
     executor: docker/docker
     steps:
       - setup_remote_docker
@@ -29,15 +29,18 @@ jobs:
           docker-password: DOCKER_PASSWORD
       - docker/build:
           image: $DOCKER_IMAGE
-          tag: $DOCKER_TAG
+          #tag: $DOCKER_TAG
+          tag: build-${CIRCLE_BUILD_NUM}
       - docker/push:
           digest-path: /tmp/digest.txt
           image: $DOCKER_IMAGE
-          tag: $DOCKER_TAG
+          #tag: $DOCKER_TAG
+          tag: build-${CIRCLE_BUILD_NUM}
       - run:
           name: Show Docker Digest
-          command: |
-            echo "Digest is: $(</tmp/digest.txt)"
+          command: echo "Pushed build-${CIRCLE_BUILD_NUM} and latest"
+          #command: |
+          #  echo "Digest is: $(</tmp/digest.txt)"
 
   # deploy-to-k8s:
   #   docker:
