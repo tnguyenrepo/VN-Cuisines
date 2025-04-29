@@ -77,7 +77,7 @@ jobs:
       - run:
           name: Deploy to k8s
           command: |
-            ssh -i ~/.ssh/id_rsa nguyenxuantai1986@34.30.22.216 << EOF
+            ssh -i ~/.ssh/id_rsa nguyenxuantai1986@34.30.22.216 \<< EOF
               export DOCKER_USER="$DOCKER_USER"
               export DOCKER_PASSWORD="$DOCKER_PASSWORD"
               export DOCKER_TAG="build-${CIRCLE_BUILD_NUM}"
