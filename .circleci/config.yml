@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  node: circleci/node@5.2
+  node: circleci/node@5.2.0
   docker: circleci/docker@2.4.0
 
 jobs:
@@ -35,38 +35,44 @@ jobs:
           image: $DOCKER_IMAGE
           tag: $DOCKER_TAG
       - run:
+          name: Show Docker Digest
           command: |
             echo "Digest is: $(</tmp/digest.txt)"
 
-  deploy:
+  deploy-to-k8s:
     docker:
-      - image: circleci/nodejs-16
+      - image: cimg/base:stable
     steps:
       - checkout
       - run:
-          name: "Set up SSH"
+          name: Setup SSH key
           command: |
             mkdir -p ~/.ssh
             echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
             chmod 600 ~/.ssh/id_rsa
-            ssh-keyscan -H 34.30.22.216 >> ~/.ssh/known_hosts
+            ssh-keyscan -H $VM_HOST >> ~/.ssh/known_hosts
       - run:
-          name: "deploy-to-k8s"
+          name: Deploy to k8s
           command: |
-            kubectl config set-cluster k8s --server=https://34.30.22.216
-            kubectl config set-credentials circleci --token=$KUBE_TOKEN
-            kubectl config set-context default --cluster=k8s --user=ubuntu
-            kubectl config use-context default
-            kubectl set image deployment/env-uat rayrepo=$DOCKER_IMAGE:$DOCKER_TAG -n uat
+            ssh -i ~/.ssh/id_rsa nguyenxuantai1986@$VM_HOST \<< EOF
+              echo "${DOCKER_PASSWORD}" | sudo docker login -u "${DOCKER_USER}" --password-stdin
+              sudo docker pull raynguyen86/rayrepo:latest
+              sudo docker stop rayrox || true
+              sudo docker rm rayrox || true
+              sudo docker run -d --name rayrox -p 3000:80 raynguyen86/rayrepo:latest
+            EOF
 
 workflows:
-  version: 2
   mypipeline:
     jobs:
       - test
       - build-and-push:
           requires:
             - test
-      - deploy:
+          filters:
+            branches:
+              only:
+                - main
+      - deploy-to-k8s:
           requires:
             - build-and-push
