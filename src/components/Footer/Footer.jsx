@@ -17,7 +17,7 @@ const Footer = () => {
           <div className="lang">
             <select>
               <option value="India">India</option>
-              <option value="Australia">Australia</option>
+              <option value="Vietnam">Vietnam</option>
               <option value="London">London</option>
               <option value="America">America</option>
               <option value="France">France</option>
@@ -35,7 +35,7 @@ const Footer = () => {
         </div>
         <div className="bottom1">
           <div className="bottomContent">
-            <h4>ABOUT ZOMATO</h4>
+            <h4>ABOUT RAYROX</h4>
             <p>who we are</p>
             <p>blog</p>
             <p>work with us</p>
@@ -84,7 +84,7 @@ const Footer = () => {
         <p>
           By continuing past this page, you agree to our Terms of Service,
           Cookie Policy, Privacy Policy and Content Policies. All trademarks are
-          properties of their respective owners. 2008-2022 © Zomato™ Ltd. All
+          properties of their respective owners. 2008-2022 © RayRox™ Ltd. All
           rights reserved.
         </p>
       </div>

@@ -19,7 +19,7 @@ jobs:
   build-and-push:
     environment:
       DOCKER_IMAGE: raynguyen86/rayrepo
-      #DOCKER_TAG: latest
+      DOCKER_TAG: latest
     executor: docker/docker
     steps:
       - setup_remote_docker
@@ -29,41 +29,18 @@ jobs:
           docker-password: DOCKER_PASSWORD
       - docker/build:
           image: $DOCKER_IMAGE
-          #tag: $DOCKER_TAG
-          tag: build-${CIRCLE_BUILD_NUM}
+          tag: $DOCKER_TAG
+          #tag: build-${CIRCLE_BUILD_NUM}
       - docker/push:
           digest-path: /tmp/digest.txt
           image: $DOCKER_IMAGE
-          #tag: $DOCKER_TAG
-          tag: build-${CIRCLE_BUILD_NUM}
+          tag: $DOCKER_TAG
+          #tag: build-${CIRCLE_BUILD_NUM}
       - run:
           name: Show Docker Digest
-          command: echo "Pushed build-${CIRCLE_BUILD_NUM} and latest"
-          #command: |
-          #  echo "Digest is: $(</tmp/digest.txt)"
-
-  # deploy-to-k8s:
-  #   docker:
-  #     - image: cimg/base:stable
-  #   steps:
-  #     - checkout
-  #     - run:
-  #         name: Setup SSH key
-  #         command: |
-  #           mkdir -p ~/.ssh
-  #           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-  #           chmod 600 ~/.ssh/id_rsa
-  #           ssh-keyscan -H $VM_HOST >> ~/.ssh/known_hosts
-  #     - run:
-  #         name: Deploy to k8s
-  #         command: |
-  #           ssh -i ~/.ssh/id_rsa nguyenxuantai1986@$VM_HOST \<< EOF
-  #             echo "${DOCKER_PASSWORD}" | sudo docker login -u "${DOCKER_USER}" --password-stdin
-  #             sudo docker pull raynguyen86/rayrepo:latest
-  #             sudo docker stop rayrox || true
-  #             sudo docker rm rayrox || true
-  #             sudo docker run -d --name rayrox -p 3000:80 raynguyen86/rayrepo:latest
-  #           EOF
+          #command: echo "Pushed build-${CIRCLE_BUILD_NUM} and latest"
+          command: |
+            echo "Digest is: $(</tmp/digest.txt)"
 
   deploy-to-k8s:
     docker:
@@ -76,20 +53,43 @@ jobs:
             mkdir -p ~/.ssh
             echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
             chmod 600 ~/.ssh/id_rsa
-            ssh-keyscan -H 34.30.22.216 >> ~/.ssh/known_hosts
+            ssh-keyscan -H $VM_HOST >> ~/.ssh/known_hosts
       - run:
           name: Deploy to k8s
           command: |
-            ssh -i ~/.ssh/id_rsa nguyenxuantai1986@34.30.22.216 \<< EOF
-              export DOCKER_USER="$DOCKER_USER"
-              export DOCKER_PASSWORD="$DOCKER_PASSWORD"
-              export DOCKER_TAG="build-${CIRCLE_BUILD_NUM}"
-              echo "\$DOCKER_PASSWORD" | sudo docker login -u "\$DOCKER_USER" --password-stdin
-              sudo docker pull raynguyen86/rayrepo:\$DOCKER_TAG
+            ssh -i ~/.ssh/id_rsa nguyenxuantai1986@$VM_HOST \<< EOF
+              echo "${DOCKER_PASSWORD}" | sudo docker login -u "${DOCKER_USER}" --password-stdin
+              sudo docker pull raynguyen86/rayrepo:latest
               sudo docker stop rayrox || true
               sudo docker rm rayrox || true
-              sudo docker run -d --name rayrox -p 8080:3000 raynguyen86/rayrepo:\$DOCKER_TAG
+              sudo docker run -d --name rayrox -p 3000:80 raynguyen86/rayrepo:latest
             EOF
+
+  # deploy-to-k8s:
+  #   docker:
+  #     - image: cimg/base:stable
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: Setup SSH key
+  #         command: |
+  #           mkdir -p ~/.ssh
+  #           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+  #           chmod 600 ~/.ssh/id_rsa
+  #           ssh-keyscan -H 34.30.22.216 >> ~/.ssh/known_hosts
+  #     - run:
+  #         name: Deploy to k8s
+  #         command: |
+  #           ssh -i ~/.ssh/id_rsa nguyenxuantai1986@34.30.22.216 \<< EOF
+  #             export DOCKER_USER="$DOCKER_USER"
+  #             export DOCKER_PASSWORD="$DOCKER_PASSWORD"
+  #             export DOCKER_TAG="build-${CIRCLE_BUILD_NUM}"
+  #             echo "\$DOCKER_PASSWORD" | sudo docker login -u "\$DOCKER_USER" --password-stdin
+  #             sudo docker pull raynguyen86/rayrepo:\$DOCKER_TAG
+  #             sudo docker stop rayrox || true
+  #             sudo docker rm rayrox || true
+  #             sudo docker run -d --name rayrox -p 8080:3000 raynguyen86/rayrepo:\$DOCKER_TAG
+  #           EOF
 
 workflows:
   mypipeline:
